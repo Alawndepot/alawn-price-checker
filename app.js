@@ -317,6 +317,25 @@ function toast(msg) {
   document.body.appendChild(el); setTimeout(() => el.remove(), 1800);
 }
 
+// ---------- تثبيت التطبيق على التلفون ----------
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); installEvt = e;
+  ['installBtn', 'installBtn2'].forEach(id => $(id).classList.remove('hidden'));
+});
+window.addEventListener('appinstalled', () => {
+  installEvt = null;
+  ['installBtn', 'installBtn2'].forEach(id => $(id).classList.add('hidden'));
+  toast('انثبّت التطبيق ✓');
+});
+async function doInstall() {
+  if (!installEvt) return;
+  installEvt.prompt();
+  try { await installEvt.userChoice; } catch (e) {}
+  installEvt = null;
+  ['installBtn', 'installBtn2'].forEach(id => $(id).classList.add('hidden'));
+}
+
 // ---------- التشغيل ----------
 function init() {
   // رابط تفعيل: ...#k=الكود
@@ -326,6 +345,8 @@ function init() {
   $('codeBtn').onclick = submitCode;
   $('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') submitCode(); });
   $('refreshBtn').onclick = () => refresh(true);
+  $('installBtn').onclick = doInstall;
+  $('installBtn2').onclick = doInstall;
   $('torchBtn').onclick = toggleTorch;
   $('manualBtn').onclick = openManual;
   $('searchBtn').onclick = openSearch;

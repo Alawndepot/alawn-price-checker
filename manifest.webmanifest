@@ -3,6 +3,7 @@
   "short_name": "أسعار العون",
   "lang": "ar",
   "dir": "rtl",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -67,8 +67,7 @@ async function refresh(manual) {
     if (manual) toast('تحدّثت الأسعار ✓');
   } catch (e) {
     if (e.message === 'unauthorized') { logout('الكود تغيّر — اكتب الكود الجديد'); return; }
-    setStatus(DATA ? 'ما قدرت أحدّث — شغال على آخر نسخة محفوظة' : 'ما في اتصال — لازم إنترنت أول مرة', true);
-  } finally { refreshing = false; }
+    setStatus(DATA ? 'ما قدرت أحدّث — شغال على آخر نسخة محفوظة' : 'ما في اتصال — لازم إنترنت أول مرة', true);  } finally { refreshing = false; }
 }
 
 function fmtTime(iso) {
@@ -365,21 +364,47 @@ function init() {
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopCamera();
-    else if (!$('app').classList.contains('hidden')) { startCamera(); maybeRefresh(); }
+    else if (!$('app').classList.contains('hidden')) { startCamera(); maybeRefresh(); checkAppVersion(); }
   });
 
   const hasCode = !!store.get('alawn_code');
   const hasData = loadLocal();
   if (!hasCode) { showSetup(); return; }
   showApp();
-  if (!hasData) refresh(); else maybeRefresh();
-  setInterval(maybeRefresh, 5 * 60 * 1000);
+  // تحديث الأسعار مع كل فتح (الأسعار المحفوظة بتنعرض فوراً والجديدة بتنزل بالخلفية)
+  refresh();
+  checkAppVersion();
+  setInterval(() => { if (!document.hidden) { maybeRefresh(); checkAppVersion(); } }, 3 * 60 * 1000);
 
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(reg => {
+    window.__swReg = reg;
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { try { reg.update(); } catch (e) {} } });
+  }).catch(() => {});
 }
+// تحديث الأسعار تلقائي: مع كل فتح/رجوع للتطبيق، وكل 3 دقايق وهو مفتوح (بدون ما نضغط على الخادم أكثر من مرة كل 30 ثانية)
 function maybeRefresh() {
   const age = DATA && DATA.fetchedAt ? Date.now() - new Date(DATA.fetchedAt).getTime() : Infinity;
-  if (age > (CFG.REFRESH_MINUTES || 60) * 60 * 1000) refresh();
+  if (age > (CFG.MIN_REFETCH_SECONDS || 30) * 1000) refresh();
+}
+
+// تحديث البرنامج نفسه: إذا في نسخة جديدة منزّلة بنعيد التحميل لحالنا (بدون ما نقطع مسح شغال)
+const APP_VERSION = '4';
+let versionChecking = false;
+async function checkAppVersion() {
+  if (versionChecking) return;
+  versionChecking = true;
+  try {
+    const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j && j.v && String(j.v) !== APP_VERSION) {
+      const busy = !document.querySelector('.sheet:not(.hidden)') && (Date.now() - lastActivity > 4000);
+      if (busy || document.hidden) {
+        try { if (window.__swReg) await window.__swReg.update(); } catch (e) {}
+        try { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } catch (e) {}
+        location.reload();
+      }
+    }
+  } catch (e) {} finally { versionChecking = false; }
 }
 
 init();

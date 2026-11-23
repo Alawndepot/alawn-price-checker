@@ -114,6 +114,46 @@
     nav{grid-column:1 / -1}
     .sheet .panel{max-width:760px;margin:0 auto;border-radius:20px 20px 0 0}
   }
+
+  /* الصحي 2: موردين ومقارنة وطلبية */
+  .badge{background:#dc2626;color:#fff;border-radius:999px;font-size:13px;padding:0 7px;min-width:22px;line-height:22px}
+  nav .btn{font-size:15px;padding:0 6px}
+  #quoteBar{background:#fef3c7;color:#78350f;padding:8px 14px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px}
+  #quoteBar .x{flex:1}
+  #quoteBar button{border:0;background:#78350f;color:#fff;border-radius:10px;padding:6px 12px;font-family:inherit;font-weight:700}
+  .sups{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .sups .row{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:16px}
+  .sups .row:last-child{border-bottom:0}
+  .sups .row .s{flex:1;font-weight:700}
+  .sups .row .d{font-size:12px;color:var(--muted)}
+  .sups .row .v{font-weight:700;min-width:70px;text-align:left}
+  .sups .row.best{background:#dcfce7}
+  .sups .head{background:#f3f7f8;font-size:13px;color:var(--muted);font-weight:700}
+  .lowever{margin-top:8px;font-size:14px;color:#166534;font-weight:700}
+  .newp{margin-top:14px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:14px;padding:12px}
+  .newp h3{margin:0 0 8px;font-size:17px}
+  .f{display:flex;gap:8px;flex-wrap:wrap}
+  .f label{flex:1 1 140px;display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--muted);font-weight:700}
+  .f input,.f select{font-size:20px;padding:9px 10px;border:2px solid var(--line);border-radius:10px;font-family:inherit;width:100%;background:#fff;color:var(--ink)}
+  .f input:focus{outline:none;border-color:var(--navy-2)}
+  .cmp{margin-top:8px;font-weight:700;font-size:16px;min-height:22px}
+  .cmp.good{color:#166534}.cmp.bad{color:#b91c1c}.cmp.same{color:var(--muted)}
+  .btn.ok{background:#16a34a}
+  .grp{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+  .grp .gh{background:#e3f1f2;padding:8px 12px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .grp .gh .t{flex:1}
+  .ln{display:flex;align-items:center;gap:6px;padding:8px 10px;border-top:1px solid var(--line);font-size:15px}
+  .ln .n{flex:1}
+  .ln input{width:64px;font-size:17px;padding:5px;border:2px solid var(--line);border-radius:8px;text-align:center;font-family:inherit}
+  .ln select{max-width:120px;font-size:14px;padding:4px;border:1px solid var(--line);border-radius:8px;font-family:inherit}
+  .ln .x{border:0;background:none;font-size:18px;color:#b91c1c}
+  .gf{display:flex;gap:8px;padding:8px 10px;border-top:1px solid var(--line);align-items:center}
+  .gf .tot{flex:1;font-weight:700}
+  .menu button{width:100%;margin-bottom:8px}
+  .plist{list-style:none;margin:0;padding:0;overflow:auto}
+  .plist li{display:flex;gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line);font-size:16px}
+  .plist .n{flex:1;font-weight:700}
+  .btn.on{background:#f59e0b;color:#111}
 </style>
 </head>
 <body>
@@ -137,6 +177,8 @@
     <button class="iconbtn" id="refreshBtn" aria-label="تحديث الأسعار">⟳</button>
   </header>
 
+  <div id="quoteBar" class="hidden"></div>
+
   <div id="cam">
     <video id="video" playsinline muted></video>
     <div id="shade"><div id="win"></div></div>
@@ -144,12 +186,14 @@
     <div id="camOverlay" class="hidden"></div>
   </div>
 
-  <div id="result"><div class="empty">امسح باركود صنف، أو اضغط «تصفّح وبحث»</div></div>
+  <div id="result"><div class="empty">امسح باركود صنف أو ابحث عنه — بيطلعلك كل الموردين وأقل سعر حصلته</div></div>
 
   <nav>
-    <button class="btn light hidden" id="torchBtn">🔦 فلاش</button>
-    <button class="btn light" id="manualBtn">⌨️ إدخال رقم</button>
-    <button class="btn light" id="searchBtn">🔍 تصفّح وبحث</button>
+    <button class="btn light hidden" id="torchBtn">🔦</button>
+    <button class="btn light" id="searchBtn">🔍 بحث</button>
+    <button class="btn light" id="quoteBtn">📝 عرض مورد</button>
+    <button class="btn light" id="cartBtn">🛒 الطلبية <span id="cartN" class="badge hidden">0</span></button>
+    <button class="btn light" id="moreBtn" style="flex:none;min-width:56px">➕</button>
   </nav>
 </section>
 
@@ -172,6 +216,10 @@
     <div id="searchInfo"></div>
     <ul id="searchList"></ul>
   </div>
+</div>
+
+<div class="sheet hidden" id="formSheet">
+  <div class="panel" id="formPanel"></div>
 </div>
 
 <script src="config.js"></script>

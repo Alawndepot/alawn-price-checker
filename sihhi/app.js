@@ -450,7 +450,7 @@ function maybeRefresh() {
 }
 
 // تحديث البرنامج نفسه: إذا في نسخة جديدة منزّلة بنعيد التحميل لحالنا (بدون ما نقطع مسح شغال)
-const APP_VERSION = '1';
+const APP_VERSION = '2';
 let versionChecking = false;
 async function checkAppVersion() {
   if (versionChecking) return;

@@ -1,5 +1,5 @@
 // خدمة العمل بدون إنترنت لتطبيق الصحي — مخزنها منفصل عن قارئ الأسعار
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = [
   './', 'index.html', 'app.js', 'config.js', 'manifest.webmanifest',
   '../fonts/cairo.css',

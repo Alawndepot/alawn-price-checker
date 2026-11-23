@@ -388,7 +388,7 @@ function maybeRefresh() {
 }
 
 // تحديث البرنامج نفسه: إذا في نسخة جديدة منزّلة بنعيد التحميل لحالنا (بدون ما نقطع مسح شغال)
-const APP_VERSION = '4';
+const APP_VERSION = '5';
 let versionChecking = false;
 async function checkAppVersion() {
   if (versionChecking) return;
@@ -400,7 +400,7 @@ async function checkAppVersion() {
       const busy = !document.querySelector('.sheet:not(.hidden)') && (Date.now() - lastActivity > 4000);
       if (busy || document.hidden) {
         try { if (window.__swReg) await window.__swReg.update(); } catch (e) {}
-        try { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } catch (e) {}
+        try { const ks = await caches.keys(); await Promise.all(ks.filter(k => k.startsWith('shell-') || k.startsWith('lib-')).map(k => caches.delete(k))); } catch (e) {}
         location.reload();
       }
     }

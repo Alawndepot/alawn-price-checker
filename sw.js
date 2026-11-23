@@ -1,5 +1,5 @@
 // خدمة العمل بدون إنترنت — بتحفظ ملفات التطبيق على التلفون
-const VERSION = 'v4';
+const VERSION = 'v5';
 const SHELL = [
   './', 'index.html', 'app.js', 'config.js', 'manifest.webmanifest',
   'fonts/cairo.css',
@@ -34,6 +34,8 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (url.origin !== location.origin) return;
+  // تطبيق الصحي إله خدمته لحاله
+  if (url.pathname.indexOf('/sihhi/') >= 0) return;
   // ملفات التطبيق: من الإنترنت أول (عشان التحديثات توصل)، وإذا ما في نت من المخزن
   e.respondWith(fetch(req).then(r => {
     if (r.ok) { const copy = r.clone(); caches.open('shell-' + VERSION).then(c => c.put(req, copy)); }
